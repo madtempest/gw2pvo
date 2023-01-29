@@ -200,11 +200,11 @@ Forgive me for the bad english, Dutch is my main language ;)
 
 
 ## Credits
-Original fork from:
+
 https://github.com/ASlatius/gw2mqtt-pvo
 
-Inspiration and guidance from:
-PVoutput.org Community & API Help
 https://github.com/marcelblijleven/goodwe
+
 https://github.com/markruys/gw2pvo  
-https://github.com/mletenay/home-assistant-goodwe-inverter  
+
+PVoutput.org Community & API

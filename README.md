@@ -27,6 +27,7 @@ You will need a (free) account at [PVOutput](https://pvoutput.org). You will nee
 You can [create a system here](https://pvoutput.org/addsystem.jsp) or login to your account.
 On your [account](https://pvoutput.org/account.jsp) **scroll down**, you will find the API section, set API Access to "**Enabled**".
 **Note the API key** you will need it later.
+
 **Scroll down**, you will see "**Registered Systems**", please note the "**System Id**" that you will be useing. Example: *53518*
 Make sure the status is set to "**A**" *(Active)*.
 

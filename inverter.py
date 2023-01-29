@@ -101,7 +101,7 @@ else:
         "{:04}{:02}{:02}".format(tl.tm_year, tl.tm_mon, tl.tm_mday),            # d - Output Date in YYYY:MM:DD
         "{:02}:{:02}".format(tl.tm_hour, tl.tm_min),                            # t - Time in HH:MM
         round(e_day * 1000),                                                    # v1 - Energy Generation
-        response['h_total'],                                                    # v2 - Power Generation
+        response['e_total'],                                                    # v2 - Power Generation
         round(response['e_load_day'] * 1000),                                   # v3 - Energy Consumption
         response['e_load_total'],                                               # v4 - Power Consumption
         None,                                                                   # v5 - Temperature

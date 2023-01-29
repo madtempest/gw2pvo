@@ -101,7 +101,7 @@ Change to your own **system ID** from PVOutput.
 
 Look for:
 ```ini
-PVO_APIKEY      = "21ef99aab2e79c7380aca48ae0aafe490cc1ff70c"
+PVO_APIKEY      = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 ```
 Change to your own API key from PVOutput, see above;
 Press **CTRL + O**, press **ENTER**, **CTRL + X**

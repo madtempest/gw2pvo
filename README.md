@@ -150,7 +150,7 @@ Description=Read GoodWe inverter (UDP) and publish to PVOutput.org
 
 [Service]
 WorkingDirectory=/home/pi/goodwe2pvoutput
-ExecStart=/usr/bin/python3 /home/pi/goodwe2pvoutput/inverter_read.py
+ExecStart=/usr/bin/python3 /home/pi/goodwe2pvoutput/inverter.py
 Restart=always
 RestartSec=300
 User=goodwe2pvoutput

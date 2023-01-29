@@ -36,6 +36,15 @@ Make sure the status is set to "**A**" *(Active)*.
 Login to your Raspberry PI using Putty. I am using the default login for this example:
 *Iam sure you will be able to google info about that topic.*
 
+
+We need data from the inveter and NOT from the sems website/api since it is ..... slow, buggy and unreliable.
+Good for us someone made a [script](https://pypi.org/project/goodwe/) to pull the data using your own local network. Lets get it:
+
+```shell
+pip install goodwe
+```
+
+
 Make sure you are in your home directory, if not run this:
 ```shell
 cd /home/pi
@@ -66,7 +75,7 @@ GW_IP_ADDRESS = "192.168.0.0"
 
 Change to you own IP:
 
-**NOTE:** *You can use [advanced ip scanner](https://www.advanced-ip-scanner.com/) to scan your network and pind the IP of your inverter.*
+**NOTE:** *You can use [advanced ip scanner](https://www.advanced-ip-scanner.com/) to scan your network and find the IP of your inverter.*
 **NOTE:** *My inverter came with a website, so entering the ip gave me a website with some config data*
 
 

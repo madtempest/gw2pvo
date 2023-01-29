@@ -1,55 +1,50 @@
 #  goodwe2pvoutput
 This script pulls data directly from the GoodWe inverter and sends it directly to PVOutput **without** using the Sems portal.
 Please note that this script comes from a [fork](https://github.com/ASlatius/gw2mqtt-pvo), i only modified it and made a better guide based on [this](https://github.com/markruys/gw2pvo/) old script.
-Feel free to send me updates!
 
-## Installation Guide 
 
-### Checking Requirements
-Check if **Python** is installed [More Info](https://www.scaler.com/topics/check-python-version/) 
-Check if **PIP** is installed [More Info](https://pip.pypa.io/en/stable/installation/) 
-Check if **Git** is installed [More Info](https://linuxize.com/post/how-to-install-git-on-raspberry-pi/)
+## Checking Requirements
+- Check if **Python** is installed [More Info](https://www.scaler.com/topics/check-python-version/) 
+- Check if **PIP** is installed [More Info](https://pip.pypa.io/en/stable/installation/) 
+- Check if **Git** is installed [More Info](https://linuxize.com/post/how-to-install-git-on-raspberry-pi/)
 
 You may run, just to be sure its all up-to-date:
 ```shell
-sudo apt update
-sudo apt upgrade
+sudo apt update && sudo apt full-upgrade -y && sudo apt autoremove -y && sudo apt-get autoclean -y
 ```
 For this guide i will be using a **Raspberry Pi 3 Model B V1.2**. Others may work too.
 
 
 
-### The OS
-I will be using the **Raspberry Pi OS Live (32-bit) without deskstop** using the **Raspberry Pi Imager**
+## The OS
+I will be using the **Raspberry Pi OS Lite (32-bit) without deskstop** using the **Raspberry Pi Imager**
 [More info & how to](https://www.tomshardware.com/how-to/set-up-raspberry-pi)
 
 
 
-### PVoutput.org
+## PVoutput.org
 You will need a (free) account at [PVOutput](https://pvoutput.org). You will need a system to send the data to.
 You can [create a system here](https://pvoutput.org/addsystem.jsp) or login to your account.
 On your [account](https://pvoutput.org/account.jsp) **scroll down**, you will find the API section, set API Access to "**Enabled**".
 **Note the API key** you will need it later.
+
 **Scroll down**, you will see "**Registered Systems**", please note the "**System Id**" that you will be useing. Example: *53518*
 Make sure the status is set to "**A**" *(Active)*.
-
-
-
-## Automatic uploads
-The power graph on PVOutput is not based on the power reading from GoodWe, but on the amount of energy produced this day. 
-This has the advantage that it does not matter if you skip one or more readings.
-
-PVOutput gives you the option to choose to upload each 5, 10, or 15 minutes. Make sure you upload at the same rate as configured at PVOutput.
-
-The inverter updates goodwe-power.com each 8 minutes. The API gives resolution for produced energy of only 0.1 kWh. 
-So for a 5 minute interval we get a resolution of 1200 watt, which is pretty big. 
-To get smooth PVOutput graphs, we apply a running average which depends on the configured PVOutput upload interval time.
 
 
 
 ## Installing 
 Login to your Raspberry PI using Putty. I am using the default login for this example:
 *Iam sure you will be able to google info about that topic.*
+
+
+We need data from the inveter and NOT from the sems website/api since it is ..... slow, buggy and unreliable.
+Good for us someone made a [script](https://pypi.org/project/goodwe/) to pull the data using your own local network. Lets get it:
+
+```shell
+pip install goodwe
+```
+
 
 Make sure you are in your home directory, if not run this:
 ```shell
@@ -80,8 +75,9 @@ GW_IP_ADDRESS = "192.168.0.0"
 ```
 
 Change to you own IP:
-**NOTE:** *You can use **advanced ip scanner** to scan your network and ping the IP.*
-**NOTE:** *My inveter came with a website, so entering the ip gave me a website with some config data*
+
+**NOTE:** *You can use [advanced ip scanner](https://www.advanced-ip-scanner.com/) to scan your network and find the IP of your inverter.*
+**NOTE:** *My inverter came with a website, so entering the ip gave me a website with some config data*
 
 
 Look for:
@@ -90,9 +86,11 @@ GW_FAMILY = "DT"
 ```
 
 **Options:**  *ET, EH, ES, EM, DT, NS, XS, BP or None to detect inverter family automatically*
+
 On you inverter there should be a sticker, mine said: 
-Model: **GW5048D-ES**, 
-please note the **ES**, however in my SN there is also an "ES", so ive changed the GW_FAMILY to ES
+Model: **GW5048D-ES**.
+Please note the **ES**, however in my SN there is also an "ES", so ive changed the GW_FAMILY to ES
+
 Change to your whatever you may have.
 
 
@@ -100,11 +98,11 @@ Look for:
 ```ini
 PVO_SYSTEMID    = "12345"
 ```
-Change to your own **system ID** from PVOutput, see above;
+Change to your own **system ID** from PVOutput.
 
 Look for:
 ```ini
-PVO_APIKEY      = "21ef99aab2e79c7380aca48ae0aafe490cc1ff70c"
+PVO_APIKEY      = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 ```
 Change to your own API key from PVOutput, see above;
 Press **CTRL + O**, press **ENTER**, **CTRL + X**
@@ -117,7 +115,8 @@ For example, if you own a battery system you can send the batterly level, voltag
 [More info](https://pvoutput.org/help/donations.html#donations)
 
 
-### Systemd service (Auto start)
+
+## Systemd service (Auto start)
 So we want to run this as a service. As a bonus this will run if you unplug the power or restart the PI.
 
 Open putty, login and type or copy the following:
@@ -137,7 +136,7 @@ WorkingDirectory=/home/pi/goodwe2pvoutput
 ExecStart=/usr/bin/python3 /home/pi/goodwe2pvoutput/inverter_read.py
 Restart=always
 RestartSec=300
-User=arno
+User=goodwe2pvoutput
 
 [Install]
 WantedBy=multi-user.target
@@ -150,7 +149,7 @@ PVoutput [api](https://pvoutput.org/help/live_data.html#live-configuration-statu
 >       10 minutes (or 600 sec)
 >       15 minutes (or 900 sec)
 
-I highy suggest leaing it at 300.
+I **highly** suggest leaving it at 300 for the best results.
 Press **CTRL + O**, press **ENTER**, **CTRL + X**
 
 
@@ -164,43 +163,49 @@ sudo journalctl -u goodwe2pvoutput -f
 ```
 
 
-### OpenWeatherMap
+
+## OpenWeatherMap
 Create a account at [OpenWeatherMap](https://home.openweathermap.org/users/sign_up)
 Go to **API Keys** and look for **Create key** enter a name, for example: **PVoutput**
 A new key will be generated for you, **copy the API key**.
 
 
-### Temperature
+
+## Adding Temperature
 The old [gw2pvo](https://github.com/markruys/gw2pvo/) script required that you uploaded the temperature based on your location, using **netatmo** or **Dark Sky**. 
 For that we use the **Automatic Uploads** from PVOutput itself.
+
 **NOTE:** *DO NOT upload the temperature from the inverter. This is the temperature from the inverter itself, but PVoutput expects outside temperature.*
 
 Edit your system at the PVOutput Website, scroll down and look for **Automatic Uploads**
 *You can find your systems at bottom or your [account](https://pvoutput.org/account.jsp).*
 
-Fot this example i used the following values:
+For this **example** i used the following values:
 
-- Primary Device: Weather
-- Poll Interval: 5 minutes
-- Shift Time: None
-- Weather Device: OpenWeatherMap
-- API Key: *the key you copied*
-- Location: **fill in** your Latitude and longitude or press **Retrive**
-- Main Temperature: Enabled
+- **Primary Device**: Weather
+- **Poll Interval**: 5 minutes
+- **Shift Time**: None
+- **Weather Device**: OpenWeatherMap
+- **API Key**: < the key you copied >
+- **Location** fill in your Latitude and longitude or press **Retrive**
+- **Main Temperature**: Enabled
 
 **Scroll down** and hit **Save**
+
 
 
 ## Final Notes
 I am in **NO WAY** a Python programmer. However i do try my best to make things work, altho it may not be the best way to do it.
 Feel free to open an ISSUE to give suggestions OR send me a pull request.
+Forgive me for the bad english, Dutch is my main language ;)
 
 
 ## Credits
-Original fork from:
+
 https://github.com/ASlatius/gw2mqtt-pvo
 
-Inspiration and guidance from:
 https://github.com/marcelblijleven/goodwe
+
 https://github.com/markruys/gw2pvo  
-https://github.com/mletenay/home-assistant-goodwe-inverter  
+
+PVoutput.org Community & API

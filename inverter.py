@@ -20,7 +20,7 @@ logging.info("Start setting values")
 
 
 # GoodWe Settings
-GW_IP_ADDRESS   = "192.168.1.55"                                # Example: 192.168.0.15
+GW_IP_ADDRESS   = "192.168.0.0"                                 # Example: 192.168.0.15
 GW_FAMILY       = "DT"                                          # One of ET, EH, ES, EM, DT, NS, XS, BP or None to detect inverter family automatically
 GW_COMM_ADDR    = None                                          # Usually 0xf7 for ET/EH or 0x7f for DT/D-NS/XS, or None for default value
 GW_TIMEOUT      = 1                                             # time in seconds - default 1
@@ -122,4 +122,3 @@ else:
     logging.info("End PVoutput")
  
 logging.info("End of script")
-sys.exit()

@@ -55,9 +55,7 @@ class PVOutputApi:
         if m1 is not None:        
             payload['m1'] = m1
             
-        #self.call("https://pvoutput.org/service/r2/addstatus.jsp", payload)
-        self.call("http://192.168.1.2/test_goodwe/get_post_data.php", payload)
-
+        self.call("https://pvoutput.org/service/r2/addstatus.jsp", payload)
 
     def call(self, url, payload):
     

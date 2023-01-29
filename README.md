@@ -3,23 +3,40 @@ This script pulls data directly from the GoodWe inverter and sends it directly t
 Please note that this script comes from a [fork](https://github.com/ASlatius/gw2mqtt-pvo), i only modified it and made a better guide based on [this](https://github.com/markruys/gw2pvo/) old script.
 
 
+
+## The OS
+For this guide i will be using a **Raspberry Pi 3 Model B V1.2**. Others may work too.
+Running the **Raspberry Pi OS Lite (32-bit) without deskstop** using the **Raspberry Pi Imager**
+[More info & how to](https://www.tomshardware.com/how-to/set-up-raspberry-pi)
+
+
+Run this before you do anything, just to be sure its all up-to-date:
+```shell
+sudo apt update && sudo apt full-upgrade -y && sudo apt autoremove -y && sudo apt-get autoclean -y
+```
+*This may take a while, please be patient!*
+and do a reboot using:
+```shell
+sudo reboot now
+```
+
 ## Checking Requirements
 - Check if **Python** is installed [More Info](https://www.scaler.com/topics/check-python-version/) 
 - Check if **PIP** is installed [More Info](https://pip.pypa.io/en/stable/installation/) 
 - Check if **Git** is installed [More Info](https://linuxize.com/post/how-to-install-git-on-raspberry-pi/)
 
-You may run, just to be sure its all up-to-date:
+Python should be already installed by default on a raspberry Pi
+
+
+PIP can be quickly installed by using the following command:
 ```shell
-sudo apt update && sudo apt full-upgrade -y && sudo apt autoremove -y && sudo apt-get autoclean -y
+sudo apt install python3-pip -y
 ```
-For this guide i will be using a **Raspberry Pi 3 Model B V1.2**. Others may work too.
 
-
-
-## The OS
-I will be using the **Raspberry Pi OS Lite (32-bit) without deskstop** using the **Raspberry Pi Imager**
-[More info & how to](https://www.tomshardware.com/how-to/set-up-raspberry-pi)
-
+Git can be quickly installed by using the following command:
+```shell
+sudo apt install git -y
+```
 
 
 ## PVoutput.org
@@ -42,7 +59,7 @@ We need data from the inveter and NOT from the sems website/api since it is ....
 Good for us someone made a [script](https://pypi.org/project/goodwe/) to pull the data using your own local network. Lets get it:
 
 ```shell
-pip install goodwe
+sudo pip install goodwe
 ```
 
 
@@ -53,7 +70,7 @@ cd /home/pi
 
 Clone the files:
 ```shell
-git clone https://github.com/Janvier123/goodwe2pvoutput
+sudo git clone https://github.com/Janvier123/goodwe2pvoutput
 ```
 
 
@@ -158,9 +175,29 @@ Now run the following, line by line:
 sudo useradd -m goodwe2pvoutput
 sudo systemctl enable goodwe2pvoutput
 sudo systemctl start goodwe2pvoutput
-sudo systemctl status goodwe2pvoutput
+```
+
+Thats it!
+
+You can check the status
+```shell
 sudo journalctl -u goodwe2pvoutput -f
 ```
+
+You should be able to see some text. Any error(s) should popup.
+
+If all looks good, you can unplug it and place it where you want. You can even setup a WIFI connection and set it near your inverter.
+
+Once you re-connect power it should start running again, it can be that it does not output anything since there is  a 5-7 min delay.
+
+Check the output on your PVOutput website or SSH into the device using the command:
+
+
+```shell
+sudo journalctl -u goodwe2pvoutput -f
+```
+
+
 
 
 

@@ -102,8 +102,8 @@ else:
         "{:02}:{:02}".format(tl.tm_hour, tl.tm_min),                            # t - Time in HH:MM
         round(e_day * 1000),                                                    # v1 - Energy Generation
         response['e_total'],                                                    # v2 - Power Generation
-        round(response['e_load_day'] * 1000),                                   # v3 - Energy Consumption
-        response['e_load_total'],                                               # v4 - Power Consumption
+        None,                                                                   # v3 - Energy Consumption
+        None,                                                                   # v4 - Power Consumption
         None,                                                                   # v5 - Temperature
         response['vgrid'],                                                      # v6 - Voltage
         None,                                                                   # c1 - Cumulative Flag

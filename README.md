@@ -88,7 +88,7 @@ Look for:
 ```ini
 PVO_SYSTEMID    = "12345"
 ```
-Change to your own **system ID** from PVOutput, see above;
+Change to your own **system ID** from PVOutput.
 
 Look for:
 ```ini
@@ -139,7 +139,7 @@ PVoutput [api](https://pvoutput.org/help/live_data.html#live-configuration-statu
 >       10 minutes (or 600 sec)
 >       15 minutes (or 900 sec)
 
-I highy suggest leaing it at 300.
+I **highly** suggest leaving it at 300 for the best results.
 Press **CTRL + O**, press **ENTER**, **CTRL + X**
 
 
@@ -161,7 +161,7 @@ A new key will be generated for you, **copy the API key**.
 
 
 
-## Addming Temperature
+## Adding Temperature
 The old [gw2pvo](https://github.com/markruys/gw2pvo/) script required that you uploaded the temperature based on your location, using **netatmo** or **Dark Sky**. 
 For that we use the **Automatic Uploads** from PVOutput itself.
 
@@ -170,7 +170,7 @@ For that we use the **Automatic Uploads** from PVOutput itself.
 Edit your system at the PVOutput Website, scroll down and look for **Automatic Uploads**
 *You can find your systems at bottom or your [account](https://pvoutput.org/account.jsp).*
 
-For this example i used the following values:
+For this **example** i used the following values:
 
 - **Primary Device**: Weather
 - **Poll Interval**: 5 minutes
@@ -187,7 +187,7 @@ For this example i used the following values:
 ## Final Notes
 I am in **NO WAY** a Python programmer. However i do try my best to make things work, altho it may not be the best way to do it.
 Feel free to open an ISSUE to give suggestions OR send me a pull request.
-
+Forgive me for the bad english, Dutch is my main language ;)
 
 
 ## Credits

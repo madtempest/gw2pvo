@@ -197,9 +197,13 @@ Check the output on your PVOutput website or SSH into the device using the comma
 sudo journalctl -u goodwe2pvoutput -f
 ```
 
+## Docker x86-64
+Runs every 5 minutes
 
-
-
+```shell
+docker build -t goodwe2pvoutput .
+docker run --restart always --name="goodwe2pvoutput" -d goodwe2pvoutput
+```
 
 ## OpenWeatherMap
 Create a account at [OpenWeatherMap](https://home.openweathermap.org/users/sign_up)

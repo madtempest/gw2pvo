@@ -1,7 +1,7 @@
 #  goodwe2pvoutput
 This script pulls data directly from the GoodWe inverter and sends it directly to PVOutput **without** using the Sems portal.
 
-Modified version from a [fork](https://github.com/Janvier123/goodwe2pvoutput) in order to work using Docker.
+Modified version from a [fork](https://github.com/Janvier123/goodwe2pvoutput) in order to work using Docker & send consumption data to pvo.
 
 
 ## Editing the script

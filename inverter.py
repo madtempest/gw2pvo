@@ -12,7 +12,7 @@ import re
 import pvo_api
 
 # Set the level of logging
-LOGLEVEL        = "INFO"                                        # Options: INFO,ERROR - Default: INFO
+LOGLEVEL        = "ERROR"                                        # Options: INFO,ERROR - Default: INFO
 
 logging.basicConfig(
     format="%(asctime)-15s %(levelname)s: %(message)s",
@@ -107,9 +107,12 @@ while True:
 
          logging.info("e_total: %s", e_total)
 	
-	 e_load_day = response['e_load_day']
-         logging.info("e_load_day: %s", e_load_day)
-
+	 #e_load_day = response['e_load_day']
+         #logging.info("e_load_day: %s", e_load_day)
+	
+	 e_load_total = response['e_load_total']
+         logging.info("e_load_total: %s", e_load_total)
+	
          # See https://pvoutput.org/help/api_specification.html#add-status-service
          # DO NOT SEND v5 unless it can get it from the outside, probably not. Please use the build in OpenWeatherMap from PVoutput.
 
@@ -121,7 +124,7 @@ while True:
              "{:02}:{:02}".format(tl.tm_hour, tl.tm_min),                            # t - Time in HH:MM
              round(e_total * 1000),                                                  # v1 - Energy Generation
              response['ppv'],                                                        # v2 - Power Generation
-             round(e_load_day * 1000),                                               # v3 - Energy Consumption
+             round(e_load_total * 1000),                                               # v3 - Energy Consumption
              response['backup_ptotal'],                                              # v4 - Power Consumption
              None,                                                                   # v5 - Temperature
              response['vpv1'],                                                       # v6 - Voltage

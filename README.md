@@ -23,3 +23,4 @@ Take a look at the [forked repo](https://github.com/Janvier123/goodwe2pvoutput)
 ## Credits
 
 https://github.com/Janvier123/goodwe2pvoutput
+https://github.com/windcrusader/gw2pvo

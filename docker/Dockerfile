@@ -24,6 +24,8 @@ ENV GW_LNG="115.8617"
 # GoodWe Settings
 # This is set to the default address. Set it to the IP address of your inverter.
 ENV GW_IP_ADDRESS="10.10.100.253"
+# This is the port that the inverter is broadcasting on. By default it is 8899.
+ENV GW_PORT=8899
 # One of ET, EH, ES, EM, DT, NS, XS, BP or None to detect inverter family automatically.
 ENV GW_FAMILY=None
 # Usually 0xf7 for ET/EH or 0x7f for DT/D-NS/XS, or None for default value.

@@ -1,4 +1,4 @@
-#FROM python:3
+#We use the alpine image because it's much smaller than the Debian image with no dependency issues.
 FROM python:3-alpine
 
 COPY . .
@@ -17,26 +17,29 @@ USER $UNAME
 
 #Set the timezone for the container
 ENV TZ="Australia/Perth"
+#Set your lattitude here. Currently set for Perth, Australia as per the timezone.
+ENV GW_LAT="-31.9514"
+#Set your longitude here. Currently set for Perth, Australia as per the timezone.
+ENV GW_LNG="115.8617"
 # GoodWe Settings
-# # Example: 192.168.0.10
-ENV INVERTER_ADDRESS="10.10.100.253"
-# One of ET, EH, ES, EM, DT, NS, XS, BP or None to detect inverter family automatically
+# This is set to the default address. Set it to the IP address of your inverter.
+ENV GW_IP_ADDRESS="10.10.100.253"
+# One of ET, EH, ES, EM, DT, NS, XS, BP or None to detect inverter family automatically.
 ENV GW_FAMILY=None
-# Usually 0xf7 for ET/EH or 0x7f for DT/D-NS/XS, or None for default value
+# Usually 0xf7 for ET/EH or 0x7f for DT/D-NS/XS, or None for default value.
 ENV GW_COMM_ADDR=None
-# time in seconds - default 1
+# time in seconds - default 1.
 ENV GW_TIMEOUT=5
-# times to retry - default 3
+# times to retry - default 3.
 ENV GW_RETRIES=3
-# Ready every # seconds, keep below 60
+# Ready every # seconds, keep below 60.
 ENV GW_INTERVAL=30
 # PVoutput Settings
-# The System ID from pvoutput.org
+# The System ID from pvoutput.org.
 ENV PVO_SYSTEMID=""
-# The API key from pvoutput.org
+# The API key from pvoutput.org.
 ENV PVO_APIKEY=""
 #Set the log level
 ENV LOG_LEVEL="INFO"
 
 ENTRYPOINT ["python3", "inverter.py"]
-#CMD ["python3", "inverter.py"]

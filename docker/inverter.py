@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+#“Powered by SunriseSunset.io“.
 
 import asyncio
 import goodwe
@@ -8,9 +9,11 @@ import sys
 import socket
 import time
 import datetime
+from datetime import datetime, timedelta
 import re
 import pvo_api
 import os
+from sunriseio import get_sunrise_sunset, get_sunrise_tomorrow
 
 
 # Set the level of logging
@@ -22,145 +25,178 @@ logging.basicConfig(
     level=getattr(logging, LOGLEVEL, None),
 )
 
+now = datetime.now()
+now_dto = now.replace(year=1900, month=1, day=1, second=0, microsecond=0)
+tomorrows_date=now + timedelta(days=1)
+tomorrow=tomorrows_date.strftime("%Y-%m-%d")
+
+GW_LAT=float(os.environ['GW_LAT'])
+GW_LNG=float(os.environ['GW_LNG'])
+sunrise, sunset = get_sunrise_sunset(GW_LAT, GW_LNG)
+before_sunrise = sunrise - timedelta(minutes=15)
+after_sunset = sunset + timedelta(minutes=15)
+next_sunrise = get_sunrise_tomorrow(GW_LAT, GW_LNG, tomorrow)
+before_next_sunrise = next_sunrise - timedelta(minutes=15)
+
 while True:
-    if datetime.datetime.now().minute % 5 == 0:
+    #Only do checks between sunrise and sunset
+    if before_sunrise <= now_dto <= after_sunset:
+        time_is_multiple_of_five = datetime.now().minute % 5
+        if time_is_multiple_of_five == 0:
+        #if before_sunrise <= now_dto <= after_sunset:
+            logging.info("Starting the script")
+            logging.info("Start setting values")
 
-        logging.info("Starting the script")
-        logging.info("Start setting values")
+            # GoodWe Settings
+            GW_IP_ADDRESS=os.environ['GW_IP_ADDRESS']
+            GW_PORT=os.environ['GW_PORT']
+            GW_FAMILY=os.environ['GW_FAMILY']
+            GW_COMM_ADDR=int(os.environ['GW_COMM_ADDR'], 16)
+            GW_TIMEOUT=int(os.environ['GW_TIMEOUT'])
+            GW_RETRIES=int(os.environ['GW_RETRIES'])
+            GW_INTERVAL=int(os.environ['GW_INTERVAL'])
 
-        # GoodWe Settings
-        GW_IP_ADDRESS=os.environ['GW_IP_ADDRESS']
-        GW_PORT=os.environ['GW_PORT']
-        GW_FAMILY=os.environ['GW_FAMILY']
-        GW_COMM_ADDR=int(os.environ['GW_COMM_ADDR'], 16)
-        GW_TIMEOUT=int(os.environ['GW_TIMEOUT'])
-        GW_RETRIES=int(os.environ['GW_RETRIES'])
-        GW_INTERVAL=int(os.environ['GW_INTERVAL'])
+            # PVoutput Settings
+            PVO_SYSTEMID=os.environ['PVO_SYSTEMID']
+            PVO_APIKEY=os.environ['PVO_APIKEY']
 
-        # PVoutput Settings
-        PVO_SYSTEMID=os.environ['PVO_SYSTEMID']
-        PVO_APIKEY=os.environ['PVO_APIKEY']
-
-        # Settings some things - DO NOT EDIT
-        data=[]
-        e_day_last=0
-        tl=time.localtime()
-        pvo=pvo_api.PVOutputApi(PVO_SYSTEMID, PVO_APIKEY)
-
-
-        logging.info("End setting values")
-        logging.info("Start Main script")
-        logging.info("Start a connection to the inverter")
-
-        try:
-            # fails when the inverter is offline at night
-            inverter=asyncio.run(goodwe.connect(GW_IP_ADDRESS, GW_PORT, GW_FAMILY, GW_COMM_ADDR, GW_TIMEOUT, GW_RETRIES))
-        except Exception as inst:
-            # notify offline
-            logging.error("Can't connect, assume offline :: %s", str(inst))
-            sys.exit()
-
-        else:
-            logging.info("Connected!")
-            # inverter read succesfully
-            logging.info("Model %s, Serial %s, Version %s", inverter.model_name, inverter.serial_number, inverter.firmware)
-            response = asyncio.run(inverter.read_runtime_data())
-
-            if (LOGLEVEL == "INFO"):
-                logging.info("Start runtime_data")
-                for sensor in inverter.sensors():
-                    if sensor.id_ in response:
-                        print(f"{sensor.id_}: \t\t {sensor.name} = {response[sensor.id_]} {sensor.unit}")
-            logging.info("End runtime_data")
+            # Settings some things - DO NOT EDIT
+            data=[]
+            e_day_last=0
+            #tl=time.localtime()
+            pvo=pvo_api.PVOutputApi(PVO_SYSTEMID, PVO_APIKEY)
 
 
-        # uncomment the lines below line if you want to pull inverter settings, this may not work on all models
-        # See a raw example of what it can pull at: https://github.com/Janvier123/goodwe2pvoutput/tree/main/data_dump
+            logging.info("End setting values")
+            logging.info("Start Main script")
+            logging.info("Start a connection to the inverter")
 
-        #response2 = asyncio.run(inverter.read_settings_data())
-        #if (LOGLEVEL == "INFO"):
-        #    logging.info("Start settings_data")
-        #    for setting in inverter.settings():
-        #        print(f"{setting.id_}: \t\t {setting.name} = {response2[setting.id_]} {setting.unit}")
-        #    logging.info("End settings_data")
+            try:
+                # fails when the inverter is offline at night
+                inverter=asyncio.run(goodwe.connect(GW_IP_ADDRESS, GW_PORT, GW_FAMILY, GW_COMM_ADDR, GW_TIMEOUT, GW_RETRIES))
+            except Exception as inst:
+                # notify offline
+                logging.error("Can't connect, assume offline :: %s", str(inst))
+                sys.exit()
 
-        # reads -1 sometimes
-            if (response['ppv'] >= 0 and response['e_day'] >= 0):
-                e_day_last = response['e_day']
-                logging.info("e_day_last: %s", e_day_last)
-
-        # Goodwe is somewhat buggy, sometimes return 0 for total day energy. We don't want to see that in PVOutput
-            if (response['e_day'] > 0):
-                e_day = response['e_day']
-            elif (e_day_last > 0):
-                e_day = e_day_last
             else:
-                 e_day = 0
+                logging.info("Connected!")
+                # inverter read succesfully
+                logging.info("Model %s, Serial %s, Version %s", inverter.model_name, inverter.serial_number, inverter.firmware)
+                response = asyncio.run(inverter.read_runtime_data())
 
-            logging.info("e_day: %s", e_day)
-
-            today = "{:04}{:02}{:02}".format(tl.tm_year, tl.tm_mon, tl.tm_mday)
-            now = "{:02}:{:02}".format(tl.tm_hour, tl.tm_min)
-            #status = pvo.get_status(today, now, 1)
-            #e_total_last = status['e_total_last']
-
-        # Try for c1=1
-            if (response['e_total'] > 0):
-                e_total = response['e_total']
-            elif (e_total_last > 0):
-                e_total = e_total_last
-            else:
-                e_total = 0
-
-            logging.info("e_total: %s", e_total)
-
-        #e_load_day = response['e_load_day']
-        #logging.info("e_load_day: %s", e_load_day)
-
-            if response.get('e_load_total') is not None:
-                e_load_total = response['e_load_total']
-                logging.info("e_load_total: %s", e_load_total)
-                e_load_total = round(e_load_total * 1000)
-            else:
-                e_load_total = None
-
-            if response.get('backup_ptotal') is not None:
-                backup_ptotal = response['backup_ptotal']
-            else:
-                backup_ptotal = None
+                if (LOGLEVEL == "INFO"):
+                    logging.info("Start runtime_data")
+                    for sensor in inverter.sensors():
+                        if sensor.id_ in response:
+                            print(f"{sensor.id_}: \t\t {sensor.name} = {response[sensor.id_]} {sensor.unit}")
+                logging.info("End runtime_data")
 
 
-        #e_load_total = response['e_load_total']
-        #logging.info("e_load_total: %s", e_load_total)
+            # uncomment the lines below line if you want to pull inverter settings, this may not work on all models
+            # See a raw example of what it can pull at: https://github.com/Janvier123/goodwe2pvoutput/tree/main/data_dump
 
-        # See https://pvoutput.org/help/api_specification.html#add-status-service
-        # DO NOT SEND v5 unless it can get it from the outside, probably not. Please use the built-in OpenWeatherMap from PVoutput.
+            #response2 = asyncio.run(inverter.read_settings_data())
+            #if (LOGLEVEL == "INFO"):
+            #    logging.info("Start settings_data")
+            #    for setting in inverter.settings():
+            #        print(f"{setting.id_}: \t\t {setting.name} = {response2[setting.id_]} {setting.unit}")
+            #    logging.info("End settings_data")
 
-            logging.info("Start PVoutput")
-            logging.info("Adding the status")
+            # reads -1 sometimes
+                if (response['ppv'] >= 0 and response['e_day'] >= 0):
+                    e_day_last = response['e_day']
+                    logging.info("e_day_last: %s", e_day_last)
 
-            pvo.add_status(
-                today,            # d - Output Date in YYYY:MM:DD
-                now,                            # t - Time in HH:MM
-                round(e_total * 1000),                                                  # v1 - Energy Generation
-                response['ppv'],                                                        # v2 - Power Generation
-                e_load_total,                                             # v3 - Energy Consumption
-                backup_ptotal,                                                          # v4 - Power Consumption
-                None,                                                                   # v5 - Temperature
-                response['vpv1'],                                                       # v6 - Voltage
-                1,                                                                      # c1 - Cumulative Flag
-                None,                                                                   # n - Net Flag
-                None,                                                                   # v7 - Extended Value v7 (DONATION ONLY)
-                None,                                                                   # v8 - Extended Value v8 (DONATION ONLY)
-                None,                                                                   # v9 - Extended Value v9 (DONATION ONLY)
-                None,                                                                   # v10 - Extended Value v10 (DONATION ONLY)
-                None,                                                                   # v11 - Extended Value v11 (DONATION ONLY)
-                None,                                                                   # v12 - Extended Value v12 (DONATION ONLY)
-                None                                                                    # m1 - Text Message 1 (DONATION ONLY)
-            )
+            # Goodwe is somewhat buggy, sometimes return 0 for total day energy. We don't want to see that in PVOutput
+                if (response['e_day'] > 0):
+                    e_day = response['e_day']
+                elif (e_day_last > 0):
+                    e_day = e_day_last
+                else:
+                    e_day = 0
 
-            logging.info("Ending the status")
-            logging.info("End PVoutput")
-            logging.info("End of script")
-            time.sleep(60)
-#    quit()
+                logging.info("e_day: %s", e_day)
+
+                today = "{:04}{:02}{:02}".format(tl.tm_year, tl.tm_mon, tl.tm_mday)
+                now = "{:02}:{:02}".format(tl.tm_hour, tl.tm_min)
+                #status = pvo.get_status(today, now, 1)
+                #e_total_last = status['e_total_last']
+
+            # Try for c1=1
+                if (response['e_total'] > 0):
+                    e_total = response['e_total']
+                elif (e_total_last > 0):
+                    e_total = e_total_last
+                else:
+                    e_total = 0
+
+                logging.info("e_total: %s", e_total)
+
+            #e_load_day = response['e_load_day']
+            #logging.info("e_load_day: %s", e_load_day)
+
+                if response.get('e_load_total') is not None:
+                    e_load_total = response['e_load_total']
+                    logging.info("e_load_total: %s", e_load_total)
+                    e_load_total = round(e_load_total * 1000)
+                else:
+                    e_load_total = None
+
+                if response.get('backup_ptotal') is not None:
+                    backup_ptotal = response['backup_ptotal']
+                else:
+                    backup_ptotal = None
+
+
+            #e_load_total = response['e_load_total']
+            #logging.info("e_load_total: %s", e_load_total)
+
+            # See https://pvoutput.org/help/api_specification.html#add-status-service
+            # DO NOT SEND v5 unless it can get it from the outside, probably not. Please use the built-in OpenWeatherMap from PVoutput.
+
+                logging.info("Start PVoutput")
+                logging.info("Adding the status")
+
+                pvo.add_status(
+                    today,            # d - Output Date in YYYY:MM:DD
+                    now,                            # t - Time in HH:MM
+                    round(e_total * 1000),                                                  # v1 - Energy Generation
+                    response['ppv'],                                                        # v2 - Power Generation
+                    e_load_total,                                             # v3 - Energy Consumption
+                    backup_ptotal,                                                          # v4 - Power Consumption
+                    None,                                                                   # v5 - Temperature
+                    response['vpv1'],                                                       # v6 - Voltage
+                    1,                                                                      # c1 - Cumulative Flag
+                    None,                                                                   # n - Net Flag
+                    None,                                                                   # v7 - Extended Value v7 (DONATION ONLY)
+                    None,                                                                   # v8 - Extended Value v8 (DONATION ONLY)
+                    None,                                                                   # v9 - Extended Value v9 (DONATION ONLY)
+                    None,                                                                   # v10 - Extended Value v10 (DONATION ONLY)
+                    None,                                                                   # v11 - Extended Value v11 (DONATION ONLY)
+                    None,                                                                   # v12 - Extended Value v12 (DONATION ONLY)
+                    None                                                                    # m1 - Text Message 1 (DONATION ONLY)
+                )
+
+                logging.info("Ending the status")
+                logging.info("End PVoutput")
+                logging.info("End of script")
+                time.sleep(60)
+    else:
+        logging.info("It's night time. We'll resume logging in the morning")
+        midnight = timedelta(hours=0, minutes=0)
+        before_next_sunrise_delta = timedelta(hours=before_next_sunrise.hour, minutes=before_next_sunrise.minute)
+        #print("Before Next Sunrise", before_next_sunrise_delta)
+        now = datetime.now()
+        now_dto = now.replace(year=1900, month=1, day=1, second=0, microsecond=0)
+        now_dto_delta = timedelta(hours=now_dto.hour, minutes=now_dto.minute)
+        #print("Now", now_dto_delta)
+        #Calculcate how many minutes to midnight, then add a day because it'll be at -1 day, and add 2 minutes for good measure so the total calculation will likely tipe the next now value over to be before_next_sunrise
+        minutes_to_midnight = midnight - now_dto_delta + timedelta(days=1, seconds=120)
+        seconds_to_midnight = minutes_to_midnight.total_seconds()
+        minutes_to_morning = before_next_sunrise_delta - midnight
+        seconds_to_morning = minutes_to_morning.total_seconds()
+        timer = seconds_to_midnight + seconds_to_morning
+        print("Resume add is sunrise - now", timer)
+        logging.info("Sleeping for", timer, "seconds")
+        time.sleep(timer)

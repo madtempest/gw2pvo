@@ -1,0 +1,22 @@
+services:
+    gw2pvo:
+        image: madtempest
+        container_name: gw2pvo
+        environment:
+          - TZ=Australia/Perth
+          - LOG_LEVEL="INFO"
+          - GW_LAT=None
+          - GW_LNG=None
+          - GW_IP_ADDRESS="10.10.100.253"
+          - GW_PORT=8899
+          - GW_FAMILY=None
+          - GW_COMM_ADDR=None
+          - GW_TIMEOUT=5
+          - GW_RETRIES=3
+          - GW_INTERVAL=30
+          - PVO_SYSTEMID="12345"
+          - FILE__PVO_APIKEY=/run/secrets/pvo_apikey
+        restart: unless-stopped
+        network_mode: host
+        volumes:
+          - ./pvo_apikey:/run/secrets/pvo_apikey:ro

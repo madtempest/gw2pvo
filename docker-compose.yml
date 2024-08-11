@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     environment:
       - TZ=Australia/Perth
-      - INVERTER_ADDRESS="10.10.100.253"
+      - GW_IP_ADDRESS="10.10.100.253"
       - GW_PORT="8899"
       - GW_FAMILY="DT"
       - GW_COMM_ADDR=0x7f

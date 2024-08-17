@@ -19,6 +19,8 @@ ENV TZ="Australia/Perth"
 # GoodWe Settings
 # # Example: 192.168.0.10
 ENV GW_IP_ADDRESS="10.10.100.253"
+#Add the port that the inverter is streaming data. This is 8899 by default.
+ENV GW_PORT="8899"
 # One of ET, EH, ES, EM, DT, NS, XS, BP or None to detect inverter family automatically
 ENV GW_FAMILY=None
 # Usually 0xf7 for ET/EH or 0x7f for DT/D-NS/XS, or None for default value

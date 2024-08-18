@@ -100,6 +100,8 @@ class PVOutputApi:
             'X-Rate-Limit': '1'
         }
 
+        r = None
+        
         for i in range(1, 4):
             try:
                 r = requests.post(url, headers=headers, data=payload, timeout=10)

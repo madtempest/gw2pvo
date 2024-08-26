@@ -1,0 +1,21 @@
+#Docker Compose File
+services:
+  gw2pvo:
+    image: madtempest/gw2pvo:latest
+    container_name: gw2pvo
+    restart: on-failure
+    environment:
+      - TZ=Australia/Perth
+      - GW_IP_ADDRESS="10.10.100.253"
+      - GW_PORT="8899"
+      - GW_FAMILY="DT"
+      - GW_COMM_ADDR=0x7f
+      - GW_TIMEOUT="5"
+      - GW_RETRIES="3"
+      - GW_INTERVAL="30"
+      - PVO_SYSTEMID=""
+      - FILE__PVO_APIKEY=/run/secrets/pvo_apikey
+      - LOG_LEVEL="INFO"
+    network_mode: host
+    volumes:
+      - ./security/goodwe2pvoutput/pvo_apikey:/run/secrets/pvo_apikey:ro

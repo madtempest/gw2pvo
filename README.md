@@ -1,7 +1,7 @@
 #  goodwe2pvoutput
 This script pulls data directly from the GoodWe inverter and sends it directly to PVOutput **without** using the SEMS portal.
 
-This version has been updated to work correctly in a Docker container and also comes with a Docker Compose reference.
+This version has been updated to work correctly in a Docker container and also comes with a Docker Compose reference. The container is available on Docker Hub under the name gw2pvo."
 
 To support the Docker Compose reference, this script now uses environment variables.
 
@@ -50,7 +50,7 @@ Runs every 5 minutes
 
 ```shell
 docker build -t goodwe2pvoutput .
-docker run --restart on-failure --name="goodwe2pvoutput" -d goodwe2pvoutput -e -e -e -e -e -e -e -e -e 
+docker run --restart on-failure --name="goodwe2pvoutput" -d goodwe2pvoutput -e GW_IP_ADDRESS="10.10.100.253" -e GW_FAMILY="DT" -e GW_COMM_ADDR=0x7f -e PVO_SYSTEMID="12345" -e PVO_APIKEY="<insert string here>" 
 ```
 
 ## More options 

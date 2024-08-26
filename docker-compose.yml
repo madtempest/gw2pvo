@@ -3,7 +3,7 @@ services:
   gw2pvo:
     image: madtempest/gw2pvo:latest
     container_name: gw2pvo
-    restart: unless-stopped
+    restart: on-failure
     environment:
       - TZ=Australia/Perth
       - GW_IP_ADDRESS="10.10.100.253"

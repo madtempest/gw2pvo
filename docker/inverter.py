@@ -58,7 +58,7 @@ while True:
         except Exception as inst:
             # notify offline
             logging.error("Can't connect, assume offline :: %s", str(inst))
-            sys.exit()
+            sys.exit(1)
 
         else:
             logging.info("Connected!")

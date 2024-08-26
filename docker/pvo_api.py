@@ -20,9 +20,17 @@ class PVOutputApi:
         :param time: The time in 'HHMM' format.
         :return: The response from the PVOutput API.
         """
+        #url = f"https://pvoutput.org/service/r2/getstatus.jsp?sid={self.m_system_id}&d={date}&t={time}"
+        #headers = {
+        #    'X-Pvoutput-Apikey': self.m_api_key,
+        #    'X-Pvoutput-SystemId': self.m_system_id
+        #}
+        #print(url)
         try:
             response = self.call("https://pvoutput.org/service/r2/getstatus.jsp", payload)
             response.raise_for_status()  # Raise an error for bad responses
+            #print(response.text)
+        # Assuming the response is in JSON format
             values = response.text.split(',')
             print(values)
             stats = {
@@ -91,17 +99,16 @@ class PVOutputApi:
         self.call("https://pvoutput.org/service/r2/addstatus.jsp", payload)
 
     def call(self, url, payload):
-
         logging.info(payload)
 
         headers = {
-            'X-Pvoutput-Apikey' : self.m_api_key,
-            'X-Pvoutput-SystemId' : self.m_system_id,
+            'X-Pvoutput-Apikey': self.m_api_key,
+            'X-Pvoutput-SystemId': self.m_system_id,
             'X-Rate-Limit': '1'
         }
 
         r = None
-        
+
         for i in range(1, 4):
             try:
                 r = requests.post(url, headers=headers, data=payload, timeout=10)
@@ -119,9 +126,12 @@ class PVOutputApi:
                     time.sleep(reset + 1)
                 else:
                     r.raise_for_status()
-                    break
+                    return r  # Return the response object if successful
             except requests.exceptions.RequestException as arg:
-                logging.info(r.text or str(arg))
+                logging.info(str(arg))
+                if r is not None:
+                    logging.info(r.text)  # Log the response text if r is not None
             time.sleep(i ** 3)
-        else:
+
             logging.error("Failed to call PVOutput API")
+            return None  # Return None if all attempts fail

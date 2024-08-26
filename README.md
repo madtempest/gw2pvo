@@ -1,7 +1,7 @@
 #  goodwe2pvoutput
 This script pulls data directly from the GoodWe inverter and sends it directly to PVOutput **without** using the SEMS portal.
 
-This version has been updated to work correctly in a Docker container and also comes with a Docker Compose reference. The container is available on Docker Hub under the name gw2pvo."
+This version has been updated to work correctly in a Docker container and also comes with a Docker Compose reference. The container is available on Docker Hub as a multi-arch image under the name gw2pvo."
 
 To support the Docker Compose reference, this script now uses environment variables.
 
@@ -53,8 +53,17 @@ docker build -t goodwe2pvoutput .
 docker run --restart on-failure --name="goodwe2pvoutput" -d goodwe2pvoutput -e GW_IP_ADDRESS="10.10.100.253" -e GW_FAMILY="DT" -e GW_COMM_ADDR=0x7f -e PVO_SYSTEMID="12345" -e PVO_APIKEY="<insert string here>" 
 ```
 
-## More options 
-Take a look at the [forked repo](https://github.com/Janvier123/goodwe2pvoutput)
+## Todo
+* Change the environment variables in Dockerfile to use a .env file instead
+* The ability to swap between test and production mode containers where test is testing the connection to the inverter and production is uploading to PVOutput.org.
+* Fix for the undefined variable: e_total_last.
+* An SQLite database to support local data collection in case upload fails to allow later export and correct to PVOutpu.org.
+* A "Powered by SunriseSunset.io," with lattitude and longitude based sunrise and sunset times to stop polling relentlessly overnight.
+* Pull the latitude and longitude from pvoutput.org instead of them being environment variables.
+* A "padding" variable to ensure that the script is running when first light arises (typical default is 30 mins either side of sunrise and set)
+* Bash script for Crontab instead of Docker.
+* A systemd unit to run this standalone rather than as Docker.
+* Addition of Homebridge plugin using this code.
 
 
 
